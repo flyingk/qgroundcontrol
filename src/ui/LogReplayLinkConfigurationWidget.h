@@ -21,43 +21,28 @@
  
  ======================================================================*/
 
-/// @file
-///     @author Don Gagne <don@thegagnes.com>
+#ifndef _LogReplayLinkConfigurationWidget_H_
+#define _LogReplayLinkConfigurationWidget_H_
 
-#ifndef AIRFRAMECOMPONENTAIRFRAMES_H
-#define AIRFRAMECOMPONENTAIRFRAMES_H
+#include <QWidget>
 
-#include <QObject>
-#include <QQuickItem>
-#include <QList>
-#include <QMap>
+#include "LogReplayLink.h"
+#include "ui_LogReplayLinkConfigurationWidget.h"
 
-#include "UASInterface.h"
-#include "AutoPilotPlugin.h"
-
-/// MVC Controller for AirframeComponent.qml.
-class AirframeComponentAirframes
+class LogReplayLinkConfigurationWidget : public QWidget
 {
-public:
-    typedef struct {
-        QString name;
-        int         autostartId;
-    } AirframeInfo_t;
-    
-    typedef struct {
-        QString name;
-        QString imageResource;
-        QList<AirframeInfo_t*> rgAirframeInfo;
-    } AirframeType_t;
+    Q_OBJECT
 
-    static QMap<QString, AirframeComponentAirframes::AirframeType_t*>& get();
-    static void clear();
-    static void insert(QString& group, QString& image, QString& name, int id);
+public:
+    LogReplayLinkConfigurationWidget(LogReplayLinkConfiguration* config, QWidget *parent = 0, Qt::WindowFlags flags = Qt::Sheet);
     
-protected:
-    static QMap<QString, AirframeType_t*> rgAirframeTypes;
-    
+private slots:
+    void _selectLogFile(bool checked);
+
 private:
+    Ui::LogReplayLinkConfigurationWidget    _ui;
+    LogReplayLinkConfiguration*             _config;
 };
+
 
 #endif
