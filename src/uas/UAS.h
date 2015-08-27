@@ -59,7 +59,7 @@ class UAS : public UASInterface
 {
     Q_OBJECT
 public:
-    UAS(MAVLinkProtocol* protocol, int id = 0);
+    UAS(MAVLinkProtocol* protocol, int id, MAV_AUTOPILOT autopilotType);
     ~UAS();
 
     float lipoFull;  ///< 100% charged voltage
@@ -73,10 +73,6 @@ public:
     const QString& getShortState() const;
     /** @brief Get short mode */
     const QString& getShortMode() const;
-    /** @brief Translate from mode id to text */
-    QString getShortModeTextFor(uint8_t base_mode, uint32_t custom_mode) const;
-    /** @brief Translate from mode id to audio text */
-    QString getAudioModeTextFor(uint8_t base_mode, uint32_t custom_mode) const;
     /** @brief Get the unique system id */
     int getUASID() const;
     /** @brief Get the airframe */
@@ -332,6 +328,60 @@ public:
         return nedAttGlobalOffset;
     }
 
+
+    // Setters for HIL noise variance
+    void setXaccVar(float var){
+        xacc_var = var;
+    }
+
+    void setYaccVar(float var){
+        yacc_var = var;
+    }
+
+    void setZaccVar(float var){
+        zacc_var = var;
+    }
+
+    void setRollSpeedVar(float var){
+        rollspeed_var = var;
+    }
+
+    void setPitchSpeedVar(float var){
+        pitchspeed_var = var;
+    }
+
+    void setYawSpeedVar(float var){
+        pitchspeed_var = var;
+    }
+
+    void setXmagVar(float var){
+        xmag_var = var;
+    }
+
+    void setYmagVar(float var){
+        ymag_var = var;
+    }
+
+    void setZmagVar(float var){
+        zmag_var = var;
+    }
+
+    void setAbsPressureVar(float var){
+        abs_pressure_var = var;
+    }
+
+    void setDiffPressureVar(float var){
+        diff_pressure_var = var;
+    }
+
+    void setPressureAltVar(float var){
+        pressure_alt_var = var;
+    }
+
+    void setTemperatureVar(float var){
+        temperature_var = var;
+    }
+
     bool isRotaryWing();
     bool isFixedWing();
 
@@ -464,6 +514,21 @@ protected: //COMMENTS FOR TEST UNIT
     quint64 imageStart;
     bool blockHomePositionChanges;   ///< Block changes to the home position
     bool receivedMode;          ///< True if mode was retrieved from current conenction to UAS
+
+    /// SIMULATION NOISE
+    float xacc_var;             ///< variance of x acclerometer noise for HIL sim (mg)
+    float yacc_var;             ///< variance of y acclerometer noise for HIL sim (mg)
+    float zacc_var;             ///< variance of z acclerometer noise for HIL sim (mg)
+    float rollspeed_var;        ///< variance of x gyroscope noise for HIL sim (rad/s)
+    float pitchspeed_var;       ///< variance of y gyroscope noise for HIL sim (rad/s)
+    float yawspeed_var;         ///< variance of z gyroscope noise for HIL sim (rad/s)
+    float xmag_var;             ///< variance of x magnatometer noise for HIL sim (???)
+    float ymag_var;             ///< variance of y magnatometer noise for HIL sim (???)
+    float zmag_var;             ///< variance of z magnatometer noise for HIL sim (???)
+    float abs_pressure_var;     ///< variance of absolute pressure noise for HIL sim (hPa)
+    float diff_pressure_var;    ///< variance of differential pressure noise for HIL sim (hPa)
+    float pressure_alt_var;     ///< variance of altitude pressure noise for HIL sim (hPa)
+    float temperature_var;      ///< variance of temperature noise for HIL sim (C)
 
     /// SIMULATION
 #ifndef __mobile__
@@ -728,6 +793,8 @@ public slots:
     void sendHilOpticalFlow(quint64 time_us, qint16 flow_x, qint16 flow_y, float flow_comp_m_x,
                             float flow_comp_m_y, quint8 quality, float ground_distance);
 
+    float addZeroMeanNoise(float truth_meas, float noise_var);
+
     /**
      * @param time_us
      * @param lat
@@ -844,6 +911,9 @@ public slots:
 
     void startCalibration(StartCalibrationType calType);
     void stopCalibration(void);
+
+    void startBusConfig(StartBusConfigType calType);
+    void stopBusConfig(void);
 
     void startDataRecording();
     void stopDataRecording();
