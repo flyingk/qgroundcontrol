@@ -93,7 +93,7 @@ void ChartPlot::styleChanged(bool styleIsDark)
     // Generate a new color list for curves and recolor them.
     for (int i = 0; i < numColors; ++i)
     {
-        colors[i] = styleIsDark ? baseColors[i].lighter(150) : baseColors[i].darker(150);
+        colors[i] = styleIsDark ? baseColors[i].lighter(0) : baseColors[i].darker(0);
     }
     shuffleColors();
 
