@@ -37,7 +37,7 @@ This file is part of the PIXHAWK project
 
 #include <UASInterface.h>
 #include <UAS.h>
-#include <UASManager.h>
+#include <HomePositionManager.h>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QTextEdit>
@@ -84,8 +84,6 @@ WaypointList::WaypointList(QWidget *parent, UASWaypointManager* wpm) :
     // SAVE/LOAD WAYPOINTS
     connect(m_ui->saveButton, SIGNAL(clicked()), this, SLOT(saveWaypoints()));
     connect(m_ui->loadButton, SIGNAL(clicked()), this, SLOT(loadWaypoints()));
-
-    //connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     //VIEW TAB
 
@@ -316,8 +314,8 @@ void WaypointList::addEditable(bool onCurrentPosition)
                     } else {
                         updateStatusLabel(tr("Added default GLOBAL (Relative alt.) waypoint."));
                     }
-                    wp = new Waypoint(0, UASManager::instance()->getHomeLatitude(),
-                                      UASManager::instance()->getHomeLongitude(),
+                    wp = new Waypoint(0, HomePositionManager::instance()->getHomeLatitude(),
+                                      HomePositionManager::instance()->getHomeLongitude(),
                                       WPM->getAltitudeRecommendation(), 0, WPM->getAcceptanceRadiusRecommendation(), 0, 0,true, true, (MAV_FRAME)WPM->getFrameRecommendation(), MAV_CMD_NAV_WAYPOINT);
                     WPM->addWaypointEditable(wp);
                 }
@@ -339,8 +337,8 @@ void WaypointList::addEditable(bool onCurrentPosition)
             {
                 // MAV connected, but position unknown, add default waypoint
                 updateStatusLabel(tr("WARNING: No position known. Adding default LOCAL (NED) waypoint"));
-                wp = new Waypoint(0, UASManager::instance()->getHomeLatitude(),
-                                  UASManager::instance()->getHomeLongitude(),
+                wp = new Waypoint(0, HomePositionManager::instance()->getHomeLatitude(),
+                                  HomePositionManager::instance()->getHomeLongitude(),
                                   WPM->getAltitudeRecommendation(), 0, WPM->getAcceptanceRadiusRecommendation(), 0, 0,true, true, (MAV_FRAME)WPM->getFrameRecommendation(), MAV_CMD_NAV_WAYPOINT);
                 WPM->addWaypointEditable(wp);
             }
@@ -349,8 +347,8 @@ void WaypointList::addEditable(bool onCurrentPosition)
         {
             //Since no UAV available, create first default waypoint.
             updateStatusLabel(tr("No UAV connected. Adding default GLOBAL (NED) waypoint"));
-            wp = new Waypoint(0, UASManager::instance()->getHomeLatitude(),
-                              UASManager::instance()->getHomeLongitude(),
+            wp = new Waypoint(0, HomePositionManager::instance()->getHomeLatitude(),
+                              HomePositionManager::instance()->getHomeLongitude(),
                               WPM->getAltitudeRecommendation(), 0, WPM->getAcceptanceRadiusRecommendation(), 0, 0,true, true, (MAV_FRAME)WPM->getFrameRecommendation(), MAV_CMD_NAV_WAYPOINT);
             WPM->addWaypointEditable(wp);
         }

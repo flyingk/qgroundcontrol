@@ -37,7 +37,8 @@ This file is part of the QGROUNDCONTROL project
 #include <QDoubleSpinBox>
 #include <QDebug>
 
-#include "UASManager.h"
+#include "MultiVehicleManager.h"
+#include "HomePositionManager.h"
 #include "HSIDisplay.h"
 #include "QGC.h"
 #include "Waypoint.h"
@@ -178,16 +179,9 @@ HSIDisplay::HSIDisplay(QWidget *parent) :
     // XXX this looks a potential recursive issue
     //connect(&statusClearTimer, SIGNAL(timeout()), this, SLOT(clearStatusMessage()));
 
-    if (UASManager::instance()->getActiveUAS())
-    {
-        setActiveUAS(UASManager::instance()->getActiveUAS());
-    }
-
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)),
-            this, SLOT(setActiveUAS(UASInterface*)));
-
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)),
-            this, SLOT(setActiveUAS(UASInterface*)));
+    connect(MultiVehicleManager::instance(), &MultiVehicleManager::activeVehicleChanged, this, &HSIDisplay::_activeVehicleChanged);
+    
+    _activeVehicleChanged(MultiVehicleManager::instance()->activeVehicle());
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -440,11 +434,6 @@ void HSIDisplay::renderOverlay()
         paintText(tr("GPS"), labelColor, 2.6f, 2, vheight- 4.0f, &painter);
         paintText(str, valueColor, 2.6f, 10, vheight - 4.0f, &painter);
     }
-
-    // Draw Safety
-    double x1, y1, z1, x2, y2, z2;
-    UASManager::instance()->getLocalNEDSafetyLimits(&x1, &y1, &z1, &x2, &y2, &z2);
-    //    drawSafetyArea(QPointF(x1, y1), QPointF(x2, y2), QGC::colorYellow, painter);
 
     // Draw status message
     paintText(statusMessage, statusColor, 2.8f, 8, 15, &painter);
@@ -918,7 +907,7 @@ void HSIDisplay::setMetricWidth(double width)
  *
  * @param uas the UAS/MAV to monitor/display with the HUD
  */
-void HSIDisplay::setActiveUAS(UASInterface* uas)
+void HSIDisplay::_activeVehicleChanged(Vehicle* vehicle)
 {
     if (this->uas != NULL) {
         disconnect(this->uas, SIGNAL(gpsSatelliteStatusChanged(int,int,float,float,float,bool)), this, SLOT(updateSatellite(int,int,float,float,float,bool)));
@@ -953,9 +942,12 @@ void HSIDisplay::setActiveUAS(UASInterface* uas)
         disconnect(this->uas, &UASInterface::navigationControllerErrorsChanged,
                    this, &HSIDisplay::UpdateNavErrors);
     }
+    
+    this->uas = NULL;
 
-    if (uas)
+    if (vehicle)
     {
+        this->uas = vehicle->uas();
         connect(uas, SIGNAL(gpsSatelliteStatusChanged(int,int,float,float,float,bool)),
                 this, SLOT(updateSatellite(int,int,float,float,float,bool)));
         connect(uas, SIGNAL(localPositionChanged(UASInterface*,double,double,double,quint64)),
@@ -1018,8 +1010,6 @@ void HSIDisplay::setActiveUAS(UASInterface* uas)
     {
         statusClearTimer.stop();
     }
-
-    this->uas = uas;
 
     resetMAVState();
 }
@@ -1377,7 +1367,7 @@ void HSIDisplay::drawWaypoints(QPainter& painter)
 
                 // Transform the lat/lon for this waypoint into the local frame
                 double e, n, u;
-                UASManager::instance()->wgs84ToEnu(w->getX(), w->getY(),w->getZ(), &e, &n, &u);
+                HomePositionManager::instance()->wgs84ToEnu(w->getX(), w->getY(),w->getZ(), &e, &n, &u);
                 in = QPointF(n, e);
             }
             // Otherwise we don't process this waypoint.

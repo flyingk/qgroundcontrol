@@ -41,7 +41,6 @@ This file is part of the QGROUNDCONTROL project
 #include "LinkManager.h"
 #include "LinkInterface.h"
 #include "UASInterface.h"
-#include "UASManager.h"
 #include "UASControlWidget.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
@@ -65,6 +64,7 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCMAVLinkLogPlayer.h"
 #include "MAVLinkDecoder.h"
 #include "QGCUASFileViewMulti.h"
+#include "Vehicle.h"
 
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
@@ -134,13 +134,6 @@ public slots:
     /** @brief Show the application settings */
     void showSettings();
 
-    /** @brief Add a new UAS */
-    void UASCreated(UASInterface* uas);
-
-    /** @brief Remove an old UAS */
-    void UASDeleted(int uasID);
-
-    void handleMisconfiguration(UASInterface* uas);
     /** @brief Load configuration views */
     void loadSetupView();
     /** @brief Load view for pilot */
@@ -288,6 +281,10 @@ private slots:
     void _showQmlTestWidget(void);
 #endif
 	void _closeWindow(void) { close(); }
+    
+private slots:
+    void _vehicleAdded(Vehicle* vehicle);
+    void _vehicleRemoved(Vehicle* vehicle);
 
 private:
     /// Constructor is private since all creation should be through MainWindow::_create
