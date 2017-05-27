@@ -48,7 +48,7 @@ FirmwarePlugin* FirmwarePluginManager::firmwarePluginForAutopilot(MAV_AUTOPILOT 
     {
         return PX4FirmwarePlugin::instance();
     }
-    else if (autopilotType == MAV_AUTOPILOT_ARDUPILOTMEGA)
+    else if (autopilotType == MAV_AUTOPILOT_UAVMAINFRAME)
     {
         return UAVmainframeFirmwarePlugin::instance();
     }
