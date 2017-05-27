@@ -67,13 +67,11 @@ QString GenericFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custom_mod
     { UAVmainframe_MODE_PREFLIGHT,          "PreFlight"},
     { UAVmainframe_MODE_MANUAL,             "Manual" },
     { UAVmainframe_MODE_PASSTHROUGH,        "PassThrough" },
-    { UAVmainframe_MODE_STABILISE,          "Stabilize" },
+    { UAVmainframe_MODE_STABILISE,          "Stabilise" },
     { UAVmainframe_MODE_TECS,               "Tecs" },
-    { UAVmainframe_MODE_RETURN_HOME,        "ReturnHome" },
-    { UAVmainframe_MODE_INPUT_OPEN_LOOP,    "InputOpen" },
-    { UAVmainframe_MODE_INPUT_CLOSED_LOOP,  "InputClosed" },
-    { UAVmainframe_MODE_INPUT_PERFORMANCE,  "InputPerformance" },
     { UAVmainframe_MODE_AUTO,               "Auto" },
+    { UAVmainframe_MODE_INPUT,              "Input" },
+
 };
     
     //Q_UNUSED(custom_mode);
