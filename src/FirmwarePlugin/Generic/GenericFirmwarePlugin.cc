@@ -58,14 +58,47 @@ QString GenericFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custom_mod
         { MAV_MODE_FLAG_AUTO_ENABLED,           "Auto" },
         { MAV_MODE_FLAG_TEST_ENABLED,           "Test" },
     };
+
+    struct Bit2NameCustom {
+        uint32_t     customModeBit;
+        const char* name;
+    };
+    static const struct Bit2NameCustom rgBit2NameCustom[] = {
+    { UAVmainframe_MODE_PREFLIGHT,          "PreFlight"},
+    { UAVmainframe_MODE_MANUAL,             "Manual" },
+    { UAVmainframe_MODE_PASSTHROUGH,        "PassThrough" },
+    { UAVmainframe_MODE_STABILISE,          "Stabilize" },
+    { UAVmainframe_MODE_TECS,               "Tecs" },
+    { UAVmainframe_MODE_RETURN_HOME,        "ReturnHome" },
+    { UAVmainframe_MODE_INPUT_OPEN_LOOP,    "InputOpen" },
+    { UAVmainframe_MODE_INPUT_CLOSED_LOOP,  "InputClosed" },
+    { UAVmainframe_MODE_INPUT_PERFORMANCE,  "InputPerformance" },
+    { UAVmainframe_MODE_AUTO,               "Auto" },
+};
     
-    Q_UNUSED(custom_mode);
+    //Q_UNUSED(custom_mode);
     
-    if (base_mode == 0) {
+    if (base_mode == 0 || custom_mode == 0)
+    {
         flightMode = "PreFlight";
-    } else if (base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
-        flightMode = QString("Custom:0x%1").arg(custom_mode, 0, 16);
-    } else {
+    }
+
+    else if (base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED)
+    {
+        //flightMode = QString("Custom:0x%1").arg(custom_mode, 0, 16);
+
+        for (size_t i=0; i<sizeof(rgBit2NameCustom)/sizeof(rgBit2NameCustom[0]); i++) {
+            if (custom_mode & rgBit2NameCustom[i].customModeBit) {
+                if (i != 0) {
+                    flightMode += " ";
+                }
+                flightMode += rgBit2NameCustom[i].name;
+            }
+        }
+    }
+
+    else
+    {
         for (size_t i=0; i<sizeof(rgBit2Name)/sizeof(rgBit2Name[0]); i++) {
             if (base_mode & rgBit2Name[i].baseModeBit) {
                 if (i != 0) {

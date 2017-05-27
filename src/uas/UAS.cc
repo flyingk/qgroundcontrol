@@ -533,7 +533,7 @@ void UAS::receiveMessage(mavlink_message_t message)
                 shortModeText = FirmwarePluginManager::instance()->firmwarePluginForAutopilot((MAV_AUTOPILOT)autopilot)->flightMode(base_mode, custom_mode);
                 emit modeChanged(this->getUASID(), shortModeText, "");
 
-                modeAudio = " is now in " + audiomodeText + "flight mode";
+                modeAudio = " is in " + audiomodeText + "mode";
             }
 
             // We got the mode
