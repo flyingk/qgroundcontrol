@@ -71,7 +71,7 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
     { UAVmainframe_MODE_TECS,               "Tecs" },
     { UAVmainframe_MODE_AUTO,               "Auto" },
     { UAVmainframe_MODE_INPUT,              "Input" },
-
+    { UAVmainframe_MODE_FLAG_FLIGHT_SIM,    "Sim" },
 };
     
     

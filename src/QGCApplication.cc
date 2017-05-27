@@ -88,6 +88,7 @@ G_END_DECLS
 #include "MultiVehicleManager.h"
 #include "Generic/GenericFirmwarePlugin.h"
 #include "PX4/PX4FirmwarePlugin.h"
+#include "UAVmainframe/UAVmainframeFirmwarePlugin.h"
 #include "Vehicle.h"
 
 #ifdef QGC_RTLAB_ENABLED
@@ -574,6 +575,11 @@ void QGCApplication::_createSingletons(void)
     FirmwarePlugin* firmwarePlugin = GenericFirmwarePlugin::_createSingleton();
     Q_UNUSED(firmwarePlugin);
     Q_ASSERT(firmwarePlugin);
+
+    // No dependencies
+    firmwarePlugin = UAVmainframeFirmwarePlugin::_createSingleton();
+//    Q_UNUSED(firmwarePlugin);
+//    Q_ASSERT(firmwarePlugin);
     
     // No dependencies
     firmwarePlugin = PX4FirmwarePlugin::_createSingleton();
