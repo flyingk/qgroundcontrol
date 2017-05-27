@@ -1,5 +1,5 @@
 /*=====================================================================
- 
+
  QGroundControl Open Source Ground Control Station
  
  (c) 2009 - 2015 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
@@ -52,12 +52,12 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
         const char* name;
     };
     static const struct Bit2Name rgBit2Name[] = {
-        { MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,   "Manual" },
-        { MAV_MODE_FLAG_STABILIZE_ENABLED,      "Stabilize" },
-        { MAV_MODE_FLAG_GUIDED_ENABLED,         "Guided" },
-        { MAV_MODE_FLAG_AUTO_ENABLED,           "Auto" },
-        { MAV_MODE_FLAG_TEST_ENABLED,           "Test" },
-    };
+    { MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,   "Manual" },
+    { MAV_MODE_FLAG_STABILIZE_ENABLED,      "Stabilize" },
+    { MAV_MODE_FLAG_GUIDED_ENABLED,         "Guided" },
+    { MAV_MODE_FLAG_AUTO_ENABLED,           "Auto" },
+    { MAV_MODE_FLAG_TEST_ENABLED,           "Test" },
+};
 
     struct Bit2NameCustom {
         uint32_t     customModeBit;
@@ -74,7 +74,6 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
 
 };
     
-    //Q_UNUSED(custom_mode);
     
     if (base_mode == 0 || custom_mode == 0)
     {
