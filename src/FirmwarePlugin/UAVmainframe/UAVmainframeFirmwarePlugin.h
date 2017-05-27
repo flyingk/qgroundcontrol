@@ -1,5 +1,5 @@
 /*=====================================================================
-
+ 
  QGroundControl Open Source Ground Control Station
  
  (c) 2009 - 2014 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
@@ -24,36 +24,29 @@
 /// @file
 ///     @author Don Gagne <don@thegagnes.com>
 
-#include "FirmwarePluginManager.h"
-#include "Generic/GenericFirmwarePlugin.h"
-#include "PX4/PX4FirmwarePlugin.h"
-#include "UAVmainframe/UAVmainframeFirmwarePlugin.h"
+#ifndef UAVmainframeFirmwarePlugin_H
+#define UAVmainframeFirmwarePlugin_H
 
-IMPLEMENT_QGC_SINGLETON(FirmwarePluginManager, FirmwarePluginManager)
+#include "FirmwarePlugin.h"
 
-FirmwarePluginManager::FirmwarePluginManager(QObject* parent) :
-    QGCSingleton(parent)
+class UAVmainframeFirmwarePlugin : public FirmwarePlugin
 {
+    Q_OBJECT
 
-}
+    DECLARE_QGC_SINGLETON(UAVmainframeFirmwarePlugin, FirmwarePlugin)
+    
+public:
+    // Overrides from FirmwarePlugin
+    
+    virtual bool isCapable(FirmwareCapabilities capabilities) { Q_UNUSED(capabilities); return false; }
+    virtual QList<VehicleComponent*> componentsForVehicle(AutoPilotPlugin* vehicle);
+    virtual QStringList flightModes(void) { return QStringList(); }
+    virtual QString flightMode(uint8_t base_mode, uint32_t custom_mode);
+    virtual bool setFlightMode(const QString& flightMode, uint8_t* base_mode, uint32_t* custom_mode);
+    
+private:
+    /// All access to singleton is through AutoPilotPluginManager::instance
+    UAVmainframeFirmwarePlugin(QObject* parent = NULL);
+};
 
-FirmwarePluginManager::~FirmwarePluginManager()
-{
-
-}
-
-FirmwarePlugin* FirmwarePluginManager::firmwarePluginForAutopilot(MAV_AUTOPILOT autopilotType)
-{
-    if (autopilotType == MAV_AUTOPILOT_PX4)
-    {
-        return PX4FirmwarePlugin::instance();
-    }
-    else if (autopilotType == MAV_AUTOPILOT_ARDUPILOTMEGA)
-    {
-        return UAVmainframeFirmwarePlugin::instance();
-    }
-    else
-    {
-        return GenericFirmwarePlugin::instance();
-    }
-}
+#endif

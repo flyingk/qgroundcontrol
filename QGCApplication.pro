@@ -337,7 +337,8 @@ HEADERS += \
     src/ViewWidgets/ParameterEditorWidget.h \
     src/ViewWidgets/ViewWidgetController.h \
     src/Waypoint.h \
-    src/AutoPilotPlugins/PX4/PX4AirframeLoader.h
+    src/AutoPilotPlugins/PX4/PX4AirframeLoader.h \
+    src/FirmwarePlugin/UAVmainframe/UAVmainframeFirmwarePlugin.h
 
 !iOSBuild {
 HEADERS += \
@@ -468,7 +469,8 @@ SOURCES += \
     src/ViewWidgets/ParameterEditorWidget.cc \
     src/ViewWidgets/ViewWidgetController.cc \
     src/Waypoint.cc \
-    src/AutoPilotPlugins/PX4/PX4AirframeLoader.cc
+    src/AutoPilotPlugins/PX4/PX4AirframeLoader.cc \
+    src/FirmwarePlugin/UAVmainframe/UAVmainframeFirmwarePlugin.cpp
 
 !iOSBuild {
 SOURCES += \
