@@ -47,11 +47,12 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
 {
     QString flightMode;
     
-    struct Bit2Name {
+    // Base Modes
+    struct Bit2Name_Base {
         uint8_t     baseModeBit;
         const char* name;
     };
-    static const struct Bit2Name rgBit2Name[] = {
+    static const struct Bit2Name_Base rgBit2Name[] = {
     { MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,   "Manual" },
     { MAV_MODE_FLAG_STABILIZE_ENABLED,      "Stabilize" },
     { MAV_MODE_FLAG_GUIDED_ENABLED,         "Guided" },
@@ -59,19 +60,36 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
     { MAV_MODE_FLAG_TEST_ENABLED,           "Test" },
 };
 
-    struct Bit2NameCustom {
-        uint32_t     customModeBit;
+    // UAVmainframe custom modes and flags
+    union {
+        struct{
+            uint16_t mode;
+            uint8_t sub_mode;
+            uint8_t mode_flags;
+        };
+        uint32_t raw;
+    }rx_data;
+
+    struct Bit2Name_Custom {
+        uint16_t     ModeBit;
+        uint16_t     SubModeBit;
         const char* name;
     };
-    static const struct Bit2NameCustom rgBit2NameCustom[] = {
-    { UAVmainframe_MODE_PREFLIGHT,          "PreFlight"},
-    { UAVmainframe_MODE_MANUAL,             "Manual" },
-    { UAVmainframe_MODE_PASSTHROUGH,        "PassThrough" },
-    { UAVmainframe_MODE_STABILISE,          "Stabilise" },
-    { UAVmainframe_MODE_TECS,               "Tecs" },
-    { UAVmainframe_MODE_AUTO,               "Auto" },
-    { UAVmainframe_MODE_INPUT,              "Input" },
-    { UAVmainframe_MODE_FLAG_FLIGHT_SIM,    "Sim" },
+    static const struct Bit2Name_Custom Bit2Name[] = {
+    { UAVmainframe_MODE_PREFLIGHT          ,0                                      ,"PreFlight"},
+    { UAVmainframe_MODE_MANUAL             ,0                                      ,"Manual" },
+    { UAVmainframe_MODE_PASSTHROUGH        ,0                                      ,"PassThrough" },
+    { UAVmainframe_MODE_STABILISE          ,0                                      ,"Stabilise" },
+    { UAVmainframe_MODE_TECS               ,0                                      ,"Tecs" },
+    { UAVmainframe_MODE_AUTO               ,UAVmainframe_SUB_MODE_RETURN_HOME      ,"Return home" },
+    { UAVmainframe_MODE_INPUT              ,0                                      ,"Random Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_ELEVATOR    ,"Elevator Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_RUDDER      ,"Rudder Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_AILERON     ,"Aileron Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_THROTTLE    ,"Throttle Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_GLIDE       ,"Glide" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_ACCEL       ,"Accel" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_SUB_MODE_FLAG_TURN        ,"Turn" },
 };
     
     
@@ -84,13 +102,33 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
     {
         //flightMode = QString("Custom:0x%1").arg(custom_mode, 0, 16);
 
-        for (size_t i=0; i<sizeof(rgBit2NameCustom)/sizeof(rgBit2NameCustom[0]); i++) {
-            if (custom_mode & rgBit2NameCustom[i].customModeBit) {
-                if (i != 0) {
-                    flightMode += " ";
-                }
-                flightMode += rgBit2NameCustom[i].name;
+        // copy raw data into union
+        rx_data.raw = custom_mode;
+
+        // search for mode and sub mode
+        for (size_t i=0; i<sizeof(Bit2Name)/sizeof(Bit2Name[0]); i++)
+        {
+            const struct Bit2Name_Custom* Bit2NameCurrent = &Bit2Name[i];
+
+            //qWarning() << rx_mode.mode << rx_mode.sub_mode;
+
+            if ((rx_data.mode == Bit2NameCurrent->ModeBit) && (rx_data.sub_mode == Bit2NameCurrent->SubModeBit))
+            {
+                flightMode = Bit2NameCurrent->name;
+                break;
             }
+        }
+
+        // closed loop input flag set?
+        if(rx_data.mode_flags & UAVmainframe_MODE_FLAG_INPUT_CLOSED_LOOP)
+        {
+            flightMode += " Closed";
+        }
+
+        // flight sim flag set?
+        if(rx_data.mode_flags & UAVmainframe_MODE_FLAG_FLIGHT_SIM)
+        {
+            flightMode += " Sim";
         }
     }
 
