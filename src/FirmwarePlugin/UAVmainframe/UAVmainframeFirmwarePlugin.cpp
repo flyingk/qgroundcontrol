@@ -102,7 +102,7 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
     {
         //flightMode = QString("Custom:0x%1").arg(custom_mode, 0, 16);
 
-        // copy raw data into union
+        // copy raw data into union to decode components
         rx_data.raw = custom_mode;
 
         // search for mode and sub mode

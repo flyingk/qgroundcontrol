@@ -29,7 +29,7 @@ public slots:
     void styleChanged(bool styleIsDark);
 
 protected:
-    const static int numColors = 20;
+    const static int numColors = 8;
     const static QColor baseColors[numColors];
     QList<QColor> colors;  ///< Colormap for curves
     int nextColorIndex;         ///< Next index in color map
