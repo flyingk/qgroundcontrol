@@ -87,11 +87,11 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
     { UAVmainframe_MODE_TECS               ,UAVmainframe_TECS_INPUT_SUB_MODE_TURN  ,"Turn" },
     { UAVmainframe_MODE_AUTO               ,0                                      ,"Auto" },
     { UAVmainframe_MODE_AUTO               ,UAVmainframe_AUTO_SUB_MODE_RETURN_HOME ,"Return home" },
-    { UAVmainframe_MODE_INPUT              ,0                                      ,"Random Input" },
-    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_ELEVATOR   ,"Elevator Input" },
-    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_RUDDER     ,"Rudder Input" },
-    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_AILERON    ,"Aileron Input" },
-    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_THROTTLE   ,"Throttle Input" },
+    { UAVmainframe_MODE_INPUT              ,0                                      ,"Input" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_ELEVATOR   ,"Elevator" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_RUDDER     ,"Rudder" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_AILERON    ,"Aileron" },
+    { UAVmainframe_MODE_INPUT              ,UAVmainframe_INPUT_SUB_MODE_THROTTLE   ,"Throttle" },
 };
     
     
@@ -127,16 +127,16 @@ QString UAVmainframeFirmwarePlugin::flightMode(uint8_t base_mode, uint32_t custo
             flightMode += " Closed";
         }
 
-        // flight sim flag set?
-        if(rx_data.mode_flags & UAVmainframe_MODE_FLAG_FLIGHT_SIM)
-        {
-            flightMode += " Sim";
-        }
-
         // TECS mode setup flag set?
         if(rx_data.mode_flags & UAVmainframe_MODE_FLAG_TECS_INPUT_SETUP)
         {
             flightMode += " Setup";
+        }
+
+        // flight sim flag set?
+        if(rx_data.mode_flags & UAVmainframe_MODE_FLAG_FLIGHT_SIM)
+        {
+            flightMode += " Sim";
         }
     }
 
